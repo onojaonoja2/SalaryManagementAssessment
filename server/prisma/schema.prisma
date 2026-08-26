@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Country {
+  id             Int      @id @default(autoincrement())
+  code           String   @unique // ISO 3166-1 alpha-2, e.g. "US"
+  name           String
+  currencyCode   String // ISO 4217, e.g. "USD"
+  currencySymbol String
+  fxToUsd        Decimal  @map("fx_to_usd") // multiply local amount by this to get USD
+  employees      Employee[]
+
+  @@map("countries")
+}
+
+model Department {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  employees Employee[]
+
+  @@map("departments")
+}
+
+model Employee {
+  id           Int       @id @default(autoincrement())
+  employeeCode String    @unique @map("employee_code")
+  firstName    String    @map("first_name")
+  lastName     String    @map("last_name")
+  email        String    @unique
+  gender       String // "MALE" | "FEMALE" | "OTHER"
+  dateOfBirth  DateTime  @map("date_of_birth")
+  hireDate     DateTime  @map("hire_date")
+  jobTitle     String    @map("job_title")
+  countryId    Int       @map("country_id")
+  departmentId Int       @map("department_id")
+  managerId    Int?      @map("manager_id")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  country   Country     @relation(fields: [countryId], references: [id])
+  department Department  @relation(fields: [departmentId], references: [id])
+  manager   Employee?   @relation("ManagerReports", fields: [managerId], references: [id])
+  reports   Employee[]  @relation("ManagerReports")
+  salaries  Salary[]
+
+  @@index([countryId])
+  @@index([departmentId])
+  @@map("employees")
+}
+
+model Salary {
+  id            Int       @id @default(autoincrement())
+  employeeId    Int       @map("employee_id")
+  amount        Decimal
+  currencyCode  String    @map("currency_code")
+  payFrequency  String    @map("pay_frequency") // "MONTHLY" | "ANNUAL"
+  effectiveFrom DateTime  @map("effective_from")
+  effectiveTo   DateTime? @map("effective_to") // null => current salary
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId, effectiveTo])
+  @@map("salaries")
+}
