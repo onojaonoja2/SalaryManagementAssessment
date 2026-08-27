@@ -1,0 +1,19 @@
+# Render deployment for the Salary Management API
+services:
+  - type: web
+    name: salary-mgmt-api
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm install && npx prisma generate && npx prisma migrate deploy && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL        # Aiven MySQL URL (include ?ssl-mode=REQUIRED); set in Render dashboard
+      - key: JWT_SECRET          # set a strong random value in the dashboard
+      - key: HR_USERNAME
+        value: hrmanager
+      - key: HR_PASSWORD         # set a strong password in the dashboard
+      - key: CORS_ORIGIN         # set to the Vercel frontend URL, e.g. https://salary-mgmt.vercel.app
+      - key: PORT
+        value: 10000
