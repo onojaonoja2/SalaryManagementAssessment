@@ -11,8 +11,6 @@ export default defineConfig({
       DATABASE_URL:
         process.env.DATABASE_URL ?? "mysql://root:MaLow89246!@127.0.0.1:3306/salary_mgmt_test",
       JWT_SECRET: process.env.JWT_SECRET ?? "test-only-fake-secret",
-      HR_USERNAME: "hrmanager",
-      HR_PASSWORD: process.env.HR_PASSWORD ?? "test-only-fake-password",
       CORS_ORIGIN: "http://localhost:5173",
     },
   },

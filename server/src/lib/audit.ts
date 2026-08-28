@@ -5,6 +5,8 @@ export type SecurityEvent =
   | "login_success"
   | "login_failure"
   | "logout"
+  | "signup"
+  | "password_change"
   | "token_rejected"
   | "employee_create"
   | "employee_update"

@@ -11,9 +11,9 @@ services:
     envVars:
       - key: DATABASE_URL        # Aiven MySQL URL (include ?ssl-mode=REQUIRED); set in Render dashboard
       - key: JWT_SECRET          # set a strong random value in the dashboard
-      - key: HR_USERNAME
-        value: hrmanager
-      - key: HR_PASSWORD         # set a strong password in the dashboard
       - key: CORS_ORIGIN         # set to the Vercel frontend URL, e.g. https://salary-mgmt.vercel.app
       - key: PORT
         value: 10000
+      # HR_USERNAME / HR_PASSWORD are OPTIONAL. The app ships with built-in demo
+      # credentials (emailed to the reviewer), so they do not need to be set here.
+      # Override them only to change the login for a non-demo deployment.

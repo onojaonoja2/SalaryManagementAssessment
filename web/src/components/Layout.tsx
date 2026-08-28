@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Link, Navigate, Outlet, useNavigate } from "react-router-dom";
 import { getToken, logout as logoutApi } from "../lib/api";
 import { Button } from "./ui/button";
+import { ChangePasswordDialog } from "./ChangePasswordDialog";
 
 export function ProtectedRoute() {
   const token = getToken();
@@ -10,6 +12,7 @@ export function ProtectedRoute() {
 
 export function Layout() {
   const navigate = useNavigate();
+  const [pwOpen, setPwOpen] = useState(false);
   const logout = () => {
     logoutApi();
     navigate("/login", { replace: true });
@@ -26,14 +29,20 @@ export function Layout() {
               <Link to="/reports" className="hover:text-primary">Reports</Link>
             </nav>
           </div>
-          <Button variant="outline" size="sm" onClick={logout}>
-            Log out
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setPwOpen(true)}>
+              Change password
+            </Button>
+            <Button variant="outline" size="sm" onClick={logout}>
+              Log out
+            </Button>
+          </div>
         </div>
       </header>
       <main className="mx-auto w-full max-w-7xl flex-1 p-4">
         <Outlet />
       </main>
+      <ChangePasswordDialog open={pwOpen} onClose={() => setPwOpen(false)} />
     </div>
   );
 }

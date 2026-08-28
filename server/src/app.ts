@@ -60,10 +60,10 @@ export function createApp(): Express {
   // Strict limiter on authentication to slow brute force / credential stuffing.
   const authLimiter = rateLimit({
     windowMs: 10 * 60 * 1000,
-    max: 10,
+    max: 20,
     standardHeaders: true,
     legacyHeaders: false,
-    message: { error: "Too many login attempts, please try again later." },
+    message: { error: "Too many attempts, please try again later." },
   });
 
   app.get("/health", (_req, res) => res.json({ status: "ok" }));

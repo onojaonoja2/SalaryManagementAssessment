@@ -78,6 +78,17 @@ export const api = {
       method: "POST",
       body: { username, password },
     }),
+  signup: (username: string, password: string) =>
+    request<{ token: string; user: { username: string; role: string } }>("/auth/signup", {
+      method: "POST",
+      body: { username, password },
+    }),
+  changePassword: (currentPassword: string, newPassword: string) =>
+    request<{ success: boolean }>("/auth/change-password", {
+      method: "POST",
+      body: { currentPassword, newPassword },
+      auth: true,
+    }),
   employees: (params: Record<string, string | number | undefined>) => {
     const qs = new URLSearchParams();
     Object.entries(params).forEach(([k, v]) => {

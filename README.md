@@ -55,9 +55,11 @@ npm run dev                   # http://localhost:5173
 In development the Vite dev server proxies `/api` to the backend on
 `http://localhost:4000`.
 
-### Demo credentials
-- Username: `hrmanager`
-- Password: `hr@2026!`
+### Accounts (self-service)
+There is **no shared password**. Open the app, go to the login page and click
+**Sign up** to create your own HR account (username + password). After signing
+in you can change your password anytime from the header **Change password**
+button. `JWT_SECRET` is the only required server secret.
 
 ## Deployment
 
@@ -69,7 +71,7 @@ startCommand: npm start
 ```
 Set in the Render dashboard:
 - `DATABASE_URL` → your Aiven MySQL URL (with `?ssl-mode=REQUIRED`)
-- `JWT_SECRET`, `HR_PASSWORD` → strong values
+- `JWT_SECRET` → a strong random value
 - `CORS_ORIGIN` → your Vercel frontend URL
 - `PORT` → `10000`
 

@@ -69,3 +69,16 @@ model Salary {
   @@index([employeeId, effectiveTo])
   @@map("salaries")
 }
+
+// HR-manager accounts. Self-service sign-up + password change remove the need to
+// share a single static credential. Passwords are stored only as bcrypt hashes.
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique @map("username")
+  passwordHash String   @map("password_hash")
+  role         String   @default("hr") // "hr"
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}

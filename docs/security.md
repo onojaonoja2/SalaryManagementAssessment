@@ -4,11 +4,14 @@ This documents the security posture of the Salary Management app and the
 hardening applied in response to an OWASP Top 10:2025 review.
 
 ## Controls in place
-- **Authentication**: single HR-manager login, password stored as a bcrypt hash.
-  Tokens are signed JWTs with `aud`/`iss`/`jti` claims, a 30-minute TTL
-  (`JWT_TTL`), and a server-side revocation denylist (invalidated on logout).
-- **Transport secrets**: JWT secret must be set; the app **refuses to boot in
-  production** if `JWT_SECRET` or `HR_PASSWORD` is missing.
+- **Authentication**: per-user HR-manager accounts (self-service **sign-up** +
+  **password change**), so no shared credential is ever emailed or baked in.
+  Passwords are stored only as bcrypt hashes. Tokens are signed JWTs with
+  `aud`/`iss`/`jti` claims, a 30-minute TTL (`JWT_TTL`), and a server-side
+  revocation denylist (invalidated on logout).
+- **No static credentials**: accounts are created by users themselves via
+  `POST /api/auth/signup`; `JWT_SECRET` is the only required secret (the app
+  **refuses to boot in production** if it is missing).
 - **Token storage**: the SPA stores the JWT in `sessionStorage` (not
   `localStorage`) and sends it as a `Bearer` header. A strict **CSP** (via
   Helmet on the API and headers on the static host) limits XSS blast radius.
@@ -41,8 +44,9 @@ hardening applied in response to an OWASP Top 10:2025 review.
 | A10 | SSRF | N/A (no outbound requests) |
 
 ## Residual risks / future work
-- **Single shared credential**: by design (one HR persona). For multi-user use,
-  add per-user accounts, roles, MFA and password rotation.
+- **Open sign-up**: registration is currently open so reviewers can self-serve
+  without a shared password. For production, restrict to invite-only / admin-
+  provisioned accounts and add email verification, MFA and password rotation.
 - **Revocation denylist is in-memory**: resets on restart and is not shared
   across instances. Use a shared store (e.g. Redis) for multi-instance deploys.
 - **Dev-only dependency advisories**: `web` has outstanding Vite/esbuild
