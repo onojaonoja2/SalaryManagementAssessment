@@ -19,7 +19,7 @@ docs/     requirements, architecture, trade-offs, AI prompts, performance, plann
 
 ## Prerequisites
 - Node.js 18+
-- A MySQL database (local dev, or the provided Aiven instance)
+- A MySQL database (local dev, or a hosted instance)
 - `DATABASE_URL` pointing at your MySQL
 
 ## Local setup
@@ -74,4 +74,4 @@ button. `JWT_SECRET` is the only required server secret.
 ## Notes
 See [`docs/`](docs/) for the requirements document, architecture diagram,
 trade-off analysis, AI-tooling notes, performance considerations and planning
-notes. `docs/security.md` is intentionally excluded from version control.
+notes.
