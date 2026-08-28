@@ -52,9 +52,6 @@ export function Login() {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Signing in..." : "Sign in"}
             </Button>
-            <p className="text-xs text-muted-foreground">
-              Demo credentials: username <code>hrmanager</code>, password <code>hr@2026!</code>
-            </p>
           </form>
         </CardContent>
       </Card>

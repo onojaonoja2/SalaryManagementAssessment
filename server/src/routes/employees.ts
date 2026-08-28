@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authMiddleware } from "../middleware/auth";
 import { wrap } from "../lib/asyncHandler";
+import { audit } from "../lib/audit";
 import { AppError } from "../lib/errors";
 import {
   employeeCreateSchema,
@@ -43,7 +44,9 @@ router.post(
         400,
       );
     }
-    res.status(201).json(await employees.createEmployee(parsed.data));
+    const created = await employees.createEmployee(parsed.data);
+    audit("employee_create", { id: created.id, code: created.employeeCode });
+    res.status(201).json(created);
   }),
 );
 
@@ -59,7 +62,9 @@ router.put(
         400,
       );
     }
-    res.json(await employees.updateEmployee(id, parsed.data));
+    const updated = await employees.updateEmployee(id, parsed.data);
+    audit("employee_update", { id });
+    res.json(updated);
   }),
 );
 
@@ -68,7 +73,9 @@ router.delete(
   wrap(async (req, res) => {
     const id = Number(req.params.id);
     if (!Number.isInteger(id)) throw new AppError("Invalid id", 400);
-    res.json(await employees.deleteEmployee(id));
+    const result = await employees.deleteEmployee(id);
+    audit("employee_delete", { id });
+    res.json(result);
   }),
 );
 
@@ -81,7 +88,9 @@ router.post(
     if (!parsed.success) {
       throw new AppError(parsed.error.issues[0]?.message ?? "Invalid salary", 400);
     }
-    res.status(201).json(await employees.addSalary(id, parsed.data));
+    const updated = await employees.addSalary(id, parsed.data);
+    audit("salary_change", { id });
+    res.status(201).json(updated);
   }),
 );
 

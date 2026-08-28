@@ -1,6 +1,8 @@
 import { createApp } from "./app";
+import { validateAuthConfig } from "./lib/auth";
 import { prisma } from "./lib/prisma";
 
+validateAuthConfig();
 const app = createApp();
 const port = Number(process.env.PORT ?? 4000);
 

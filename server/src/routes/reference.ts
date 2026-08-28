@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma";
 import { wrap } from "../lib/asyncHandler";
+import { authMiddleware } from "../middleware/auth";
 
 const router = Router();
+router.use(authMiddleware);
 
 router.get(
   "/",

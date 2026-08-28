@@ -1,5 +1,5 @@
 import { Link, Navigate, Outlet, useNavigate } from "react-router-dom";
-import { getToken, clearToken } from "../lib/api";
+import { getToken, logout as logoutApi } from "../lib/api";
 import { Button } from "./ui/button";
 
 export function ProtectedRoute() {
@@ -11,7 +11,7 @@ export function ProtectedRoute() {
 export function Layout() {
   const navigate = useNavigate();
   const logout = () => {
-    clearToken();
+    logoutApi();
     navigate("/login", { replace: true });
   };
   return (

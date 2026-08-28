@@ -8,7 +8,7 @@ const app = createApp();
 async function login(): Promise<string> {
   const res = await request(app)
     .post("/api/auth/login")
-    .send({ username: "hrmanager", password: "hr@2026!" });
+    .send({ username: "hrmanager", password: process.env.HR_PASSWORD ?? "test-only-fake-password" });
   expect(res.status).toBe(200);
   return res.body.token;
 }
@@ -75,7 +75,7 @@ describe("auth", () => {
 
 describe("reference", () => {
   it("returns countries and departments", async () => {
-    const res = await request(app).get("/api/reference");
+    const res = await request(app).get("/api/reference").set("Authorization", `Bearer ${token}`);
     expect(res.status).toBe(200);
     expect(res.body.countries.length).toBeGreaterThan(0);
     expect(res.body.departments.length).toBeGreaterThan(0);
