@@ -35,3 +35,6 @@ coverage/
 
 # Keep the assessment PDF out of source control (binary)
 Salary Management Assessment- Candidates.pdf
+
+# Security notes are kept local-only (not pushed to the public repo)
+docs/security.md
