@@ -4,10 +4,10 @@
 
 ```mermaid
 flowchart LR
-  HR[HR Manager] -->|HTTPS| WEB[React SPA\nVercel]
-  WEB -->|/api (JWT)| API[Express API\nRender]
-  API -->|Prisma| DB[(MySQL\nAiven)]
-  SEED[Seed script\n10k employees] -->|populates| DB
+  HR[HR Manager] -->|HTTPS| WEB["React SPA<br/>Vercel"]
+  WEB -->|"/api (JWT)"| API["Express API<br/>Render"]
+  API -->|Prisma| DB[("MySQL<br/>Aiven")]
+  SEED["Seed script<br/>10k employees"] -->|populates| DB
 ```
 
 ## Components
