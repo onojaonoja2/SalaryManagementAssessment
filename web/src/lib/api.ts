@@ -95,5 +95,5 @@ export const api = {
   addSalary: (id: number, data: unknown) =>
     request<EmployeeDetail>(`/employees/${id}/salaries`, { method: "POST", body: data, auth: true }),
   reports: () => request<ReportData>("/reports", { auth: true }),
-  reference: () => request<ReferenceData>("/reference", { auth: false }),
+  reference: () => request<ReferenceData>("/reference", { auth: true }),
 };
