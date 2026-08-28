@@ -57,7 +57,7 @@ In development the Vite dev server proxies `/api` to the backend on
 
 ### Accounts (self-service)
 There is **no shared password**. Open the app, go to the login page and click
-**Sign up** to create your own HR account (username + password). After signing
+**Sign up** to create your own HR account (email + password). After signing
 in you can change your password anytime from the header **Change password**
 button. `JWT_SECRET` is the only required server secret.
 

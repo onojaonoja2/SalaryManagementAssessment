@@ -10,7 +10,7 @@ type Mode = "login" | "signup";
 export function Login() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<Mode>("login");
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -33,8 +33,8 @@ export function Login() {
     try {
       const res =
         mode === "login"
-          ? await api.login(username, password)
-          : await api.signup(username, password);
+          ? await api.login(email, password)
+          : await api.signup(email, password);
       setToken(res.token);
       navigate("/", { replace: true });
     } catch (err) {
@@ -53,12 +53,13 @@ export function Login() {
         <CardContent>
           <form onSubmit={submit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                autoComplete="username"
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
               />
             </div>
             <div className="space-y-1.5">

@@ -72,9 +72,10 @@ model Salary {
 
 // HR-manager accounts. Self-service sign-up + password change remove the need to
 // share a single static credential. Passwords are stored only as bcrypt hashes.
+// The login identifier is the user's email.
 model User {
   id           Int      @id @default(autoincrement())
-  username     String   @unique @map("username")
+  email        String   @unique @map("email")
   passwordHash String   @map("password_hash")
   role         String   @default("hr") // "hr"
   createdAt    DateTime @default(now()) @map("created_at")

@@ -73,15 +73,15 @@ async function request<T>(path: string, options: ApiOptions = {}): Promise<T> {
 }
 
 export const api = {
-  login: (username: string, password: string) =>
-    request<{ token: string; user: { username: string; role: string } }>("/auth/login", {
+  login: (email: string, password: string) =>
+    request<{ token: string; user: { email: string; role: string } }>("/auth/login", {
       method: "POST",
-      body: { username, password },
+      body: { email, password },
     }),
-  signup: (username: string, password: string) =>
-    request<{ token: string; user: { username: string; role: string } }>("/auth/signup", {
+  signup: (email: string, password: string) =>
+    request<{ token: string; user: { email: string; role: string } }>("/auth/signup", {
       method: "POST",
-      body: { username, password },
+      body: { email, password },
     }),
   changePassword: (currentPassword: string, newPassword: string) =>
     request<{ success: boolean }>("/auth/change-password", {

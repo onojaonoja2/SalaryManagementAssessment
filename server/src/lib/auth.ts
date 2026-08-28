@@ -11,7 +11,7 @@ const ISSUER = "acme-salary-mgmt";
 // For multi-instance deployments this would be a shared store (e.g. Redis).
 const revokedJtis = new Set<string>();
 
-export type AuthUser = { username: string; role: "hr" };
+export type AuthUser = { email: string; role: "hr" };
 
 // Fail fast in production if the JWT signing secret is missing. HR login
 // credentials are now per-user (stored in the DB) and are NOT required in env.
@@ -35,7 +35,7 @@ export function verifyPassword(password: string, hash: string): boolean {
 
 export function signToken(user: AuthUser): string {
   if (!JWT_SECRET) throw new Error("JWT_SECRET is not configured");
-  return jwt.sign({ sub: user.username, role: user.role, jti: randomUUID() }, JWT_SECRET, {
+  return jwt.sign({ sub: user.email, role: user.role, jti: randomUUID() }, JWT_SECRET, {
     expiresIn: TOKEN_TTL as jwt.SignOptions["expiresIn"],
     audience: AUDIENCE,
     issuer: ISSUER,
@@ -51,7 +51,7 @@ export function verifyToken(token: string): AuthUser | null {
     }) as { sub?: string; role?: string; jti?: string };
     if (!payload.sub || payload.role !== "hr") return null;
     if (payload.jti && revokedJtis.has(payload.jti)) return null;
-    return { username: payload.sub, role: "hr" };
+    return { email: payload.sub, role: "hr" };
   } catch {
     return null;
   }

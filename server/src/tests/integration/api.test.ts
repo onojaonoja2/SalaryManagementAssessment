@@ -6,11 +6,11 @@ import { prisma } from "../../lib/prisma";
 const app = createApp();
 
 async function login(): Promise<string> {
-  const username = `tester_${Math.floor(Math.random() * 1e9)}`;
+  const email = `tester_${Math.floor(Math.random() * 1e9)}@example.com`;
   const password = "test-only-fake-password";
-  const s = await request(app).post("/api/auth/signup").send({ username, password });
+  const s = await request(app).post("/api/auth/signup").send({ email, password });
   expect(s.status).toBe(201);
-  const res = await request(app).post("/api/auth/login").send({ username, password });
+  const res = await request(app).post("/api/auth/login").send({ email, password });
   expect(res.status).toBe(200);
   return res.body.token;
 }
@@ -65,7 +65,9 @@ afterAll(async () => {
 
 describe("auth", () => {
   it("rejects invalid credentials", async () => {
-    const res = await request(app).post("/api/auth/login").send({ username: "hrmanager", password: "wrong" });
+    const res = await request(app)
+      .post("/api/auth/login")
+      .send({ email: "hrmanager@example.com", password: "wrong" });
     expect(res.status).toBe(401);
   });
 
@@ -142,21 +144,21 @@ describe("reports", () => {
 });
 
 describe("signup & password change", () => {
-  it("rejects duplicate usernames", async () => {
-    const u = `dup_${Math.floor(Math.random() * 1e9)}`;
+  it("rejects duplicate emails", async () => {
+    const u = `dup_${Math.floor(Math.random() * 1e9)}@example.com`;
     const p = "password123";
-    const first = await request(app).post("/api/auth/signup").send({ username: u, password: p });
+    const first = await request(app).post("/api/auth/signup").send({ email: u, password: p });
     expect(first.status).toBe(201);
-    const second = await request(app).post("/api/auth/signup").send({ username: u, password: p });
+    const second = await request(app).post("/api/auth/signup").send({ email: u, password: p });
     expect(second.status).toBe(409);
   });
 
   it("changes password and rejects the old one", async () => {
-    const u = `chg_${Math.floor(Math.random() * 1e9)}`;
+    const u = `chg_${Math.floor(Math.random() * 1e9)}@example.com`;
     const oldP = "oldpassword1";
     const newP = "newpassword1";
-    await request(app).post("/api/auth/signup").send({ username: u, password: oldP });
-    const loginRes = await request(app).post("/api/auth/login").send({ username: u, password: oldP });
+    await request(app).post("/api/auth/signup").send({ email: u, password: oldP });
+    const loginRes = await request(app).post("/api/auth/login").send({ email: u, password: oldP });
     expect(loginRes.status).toBe(200);
     const t = loginRes.body.token;
     const change = await request(app)
@@ -164,9 +166,9 @@ describe("signup & password change", () => {
       .set("Authorization", `Bearer ${t}`)
       .send({ currentPassword: oldP, newPassword: newP });
     expect(change.status).toBe(200);
-    const oldLogin = await request(app).post("/api/auth/login").send({ username: u, password: oldP });
+    const oldLogin = await request(app).post("/api/auth/login").send({ email: u, password: oldP });
     expect(oldLogin.status).toBe(401);
-    const newLogin = await request(app).post("/api/auth/login").send({ username: u, password: newP });
+    const newLogin = await request(app).post("/api/auth/login").send({ email: u, password: newP });
     expect(newLogin.status).toBe(200);
   });
 

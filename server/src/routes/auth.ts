@@ -16,10 +16,10 @@ router.post(
     if (!parsed.success) {
       throw new AppError(parsed.error.issues[0]?.message ?? "Invalid input", 400);
     }
-    const user = await signup(parsed.data.username, parsed.data.password);
-    audit("signup", { username: user.username });
+    const user = await signup(parsed.data.email, parsed.data.password);
+    audit("signup", { email: user.email });
     const token = signToken(user);
-    res.status(201).json({ token, user: { username: user.username, role: user.role } });
+    res.status(201).json({ token, user: { email: user.email, role: user.role } });
   }),
 );
 
@@ -30,14 +30,14 @@ router.post(
     if (!parsed.success) {
       throw new AppError(parsed.error.issues[0]?.message ?? "Invalid input", 400);
     }
-    const user = await authenticate(parsed.data.username, parsed.data.password);
+    const user = await authenticate(parsed.data.email, parsed.data.password);
     if (!user) {
-      audit("login_failure", { username: parsed.data.username });
-      throw new AppError("Invalid username or password", 401);
+      audit("login_failure", { email: parsed.data.email });
+      throw new AppError("Invalid email or password", 401);
     }
-    audit("login_success", { username: user.username });
+    audit("login_success", { email: user.email });
     const token = signToken(user);
-    res.json({ token, user: { username: user.username, role: user.role } });
+    res.json({ token, user: { email: user.email, role: user.role } });
   }),
 );
 
@@ -49,8 +49,8 @@ router.post(
     if (!parsed.success) {
       throw new AppError(parsed.error.issues[0]?.message ?? "Invalid input", 400);
     }
-    await changePassword(req.user!.username, parsed.data.currentPassword, parsed.data.newPassword);
-    audit("password_change", { username: req.user!.username });
+    await changePassword(req.user!.email, parsed.data.currentPassword, parsed.data.newPassword);
+    audit("password_change", { email: req.user!.email });
     res.json({ success: true });
   }),
 );
