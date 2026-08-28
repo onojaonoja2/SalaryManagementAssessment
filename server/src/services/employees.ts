@@ -113,6 +113,11 @@ export async function listEmployees(query: EmployeeListQuery) {
             amount: num(e.salaries[0].amount),
             currencyCode: e.salaries[0].currencyCode,
             payFrequency: e.salaries[0].payFrequency,
+            annualUsd: round2(
+              (e.salaries[0].payFrequency === "MONTHLY"
+                ? num(e.salaries[0].amount) * 12
+                : num(e.salaries[0].amount)) * num(e.country.fxToUsd),
+            ),
           }
         : null,
     })),

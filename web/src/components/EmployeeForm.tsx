@@ -76,7 +76,7 @@ export function EmployeeForm({
 
   return (
     <form onSubmit={submit} className="space-y-3">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label>First name</Label>
           <Input value={values.firstName} onChange={(e) => set("firstName", e.target.value)} />
@@ -137,7 +137,7 @@ export function EmployeeForm({
           </Select>
         </div>
         {mode === "create" && (
-          <div className="col-span-2 grid grid-cols-2 gap-3">
+          <div className="col-span-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label>Initial salary amount</Label>
               <Input
