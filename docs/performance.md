@@ -25,9 +25,9 @@ Designed for **10,000 employees** (and validated against a live 10k seed).
 ## Seeding
 - `createMany` in batches of 1k–2k to keep inserts fast; deterministic PRNG so
   the dataset is reproducible for tests and demos.
-- Seeding the dev DB took a few seconds; Aiven a little longer over the network.
+- Seeding the dev DB took a few seconds; a remote DB a little longer over the network.
 
 ## Deployment
-- Render free tier may spin down when idle (cold start). Health check at
-  `/health` supports platform monitoring.
-- Aiven MySQL free tier is sufficient for this read/write volume.
+- Railway free tier may spin down when idle (cold start). Health check at
+  `/health` supports platform monitoring (configured in `railway.json`).
+- Railway MySQL is sufficient for this read/write volume.

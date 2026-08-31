@@ -10,11 +10,11 @@
 | Aggregation | **Pure TS functions over a SQL-derived fact set** | Pure SQL aggregates | Pure functions are unit-testable and readable; SQL does the heavy lifting of joining current salaries + FX. |
 | Reports DB query | **One `$queryRaw` + in-memory reduce** | Fully in SQL | Simple, fast for 10k rows, and keeps the math in tested code. For much larger orgs we'd push more into SQL. |
 | Test DB | **Dedicated `salary_mgmt_test`** | Reuse dev DB | Avoids clobbering seeded dev data; keeps integration tests deterministic. |
-| Deployment | **Render (API) + Vercel (SPA)** | Single host / containers | Free tiers, minimal config, clear separation of API and static frontend. |
+| Deployment | **Railway (API + MySQL) + Vercel (SPA)** | Single host / containers | Railway handles backend + managed MySQL in one project; Vercel serves the SPA. Clear separation, simple config via `railway.json`. |
 
 ## Known limitations
 - FX rates are fixed at seed time (no live rates).
 - No audit log of *who* changed what.
 - Salary-band filtering is USD-normalized; within a single currency it is exact,
   across currencies it is approximate (by design, to stay comparable).
-- Aiven free tier / Render free tier sleep; first request may be slow.
+- Railway and Vercel free tiers may sleep on inactivity; first request after idle may be slow.
