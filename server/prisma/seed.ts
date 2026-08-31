@@ -50,6 +50,13 @@ const GENDERS = ["MALE", "FEMALE", "OTHER"] as const;
 const NOW = new Date(2026, 0, 1);
 
 async function main() {
+  const existing = await prisma.employee.count();
+  if (existing > 0) {
+    // eslint-disable-next-line no-console
+    console.log(`Seeding skipped: ${existing} employees already present.`);
+    return;
+  }
+
   // eslint-disable-next-line no-console
   console.log("Clearing existing data...");
   await prisma.salary.deleteMany({});
