@@ -14,7 +14,7 @@ analytics.
 server/   Express + Prisma API
 web/      React SPA
 docs/     requirements, architecture, trade-offs, AI prompts, performance, planning notes
-          (security.md is kept local-only and is not committed to version control)
+          
 ```
 
 ## Prerequisites
