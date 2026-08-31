@@ -9,6 +9,10 @@ analytics.
 - **Frontend:** React + Vite + TypeScript + Tailwind (shadcn-style), TanStack Query, Recharts
 - **Tests:** Vitest (unit) + Supertest (integration)
 
+## Demo
+
+Watch the application walkthrough: [Loom Video](https://www.loom.com/share/f6bd4b28d7c440869a58ab1ccd7a1b17)
+
 ## Repository layout
 ```
 server/   Express + Prisma API
