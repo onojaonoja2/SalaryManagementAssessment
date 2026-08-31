@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import type {
   EmployeeDetail,
   EmployeeListResponse,
@@ -56,6 +57,7 @@ async function request<T>(path: string, options: ApiOptions = {}): Promise<T> {
   });
   if (res.status === 401) {
     clearToken();
+    toast.error("Session expired. Please log in again.");
     throw new Error("Unauthorized");
   }
   if (!res.ok) {

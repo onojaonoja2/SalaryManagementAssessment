@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { api } from "../lib/api";
 import { formatUsd, formatDate } from "../lib/format";
 import { Button } from "../components/ui/button";
@@ -8,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
 import { Dialog } from "../components/ui/badge";
 import { Input, Select, Label } from "../components/ui/input";
+import { LoadingSpinner } from "../components/Loading";
 
 export function EmployeeDetail() {
   const { id } = useParams();
@@ -17,7 +19,6 @@ export function EmployeeDetail() {
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState("");
   const [payFrequency, setPayFrequency] = useState<"MONTHLY" | "ANNUAL">("MONTHLY");
-  const [error, setError] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["employee", empId],
@@ -32,12 +33,13 @@ export function EmployeeDetail() {
       setAmount("");
       qc.invalidateQueries({ queryKey: ["employee", empId] });
       qc.invalidateQueries({ queryKey: ["reports"] });
+      toast.success("Salary change recorded");
     },
-    onError: (e: Error) => setError(e.message),
+    onError: (e: Error) => toast.error(e.message),
   });
 
   if (Number.isNaN(empId)) return <p className="text-destructive">Invalid employee id.</p>;
-  if (isLoading) return <p className="text-muted-foreground">Loading…</p>;
+  if (isLoading) return <LoadingSpinner label="Loading employee…" />;
   if (!data) return <p className="text-destructive">Employee not found.</p>;
 
   return (
@@ -114,8 +116,7 @@ export function EmployeeDetail() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            if (!amount) { setError("Amount is required."); return; }
-            setError(null);
+            if (!amount) { toast.error("Amount is required."); return; }
             addSalary.mutate({
               amount: Number(amount),
               currencyCode: data.currentSalary?.currencyCode ?? "USD",
@@ -135,7 +136,6 @@ export function EmployeeDetail() {
               <option value="ANNUAL">Annual</option>
             </Select>
           </div>
-          {error && <p className="text-sm text-destructive">{error}</p>}
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
             <Button type="submit" disabled={addSalary.isPending}>Save</Button>

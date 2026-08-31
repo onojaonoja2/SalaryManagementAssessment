@@ -1,8 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { toast } from "sonner";
 import { api } from "../lib/api";
 import { formatUsd, formatNumber } from "../lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { LoadingSpinner } from "../components/Loading";
 
 function Kpi({ label, value }: { label: string; value: string }) {
   return (
@@ -20,8 +23,12 @@ function Kpi({ label, value }: { label: string; value: string }) {
 export function Dashboard() {
   const { data, isLoading, error } = useQuery({ queryKey: ["reports"], queryFn: api.reports });
 
-  if (isLoading) return <p className="text-muted-foreground">Loading dashboard…</p>;
-  if (error || !data) return <p className="text-destructive">Failed to load reports.</p>;
+  useEffect(() => {
+    if (error) toast.error("Failed to load reports.");
+  }, [error]);
+
+  if (isLoading) return <LoadingSpinner label="Loading dashboard…" />;
+  if (error || !data) return null;
 
   const topCountries = [...data.byCountry].slice(0, 10).map((c) => ({
     name: c.name,

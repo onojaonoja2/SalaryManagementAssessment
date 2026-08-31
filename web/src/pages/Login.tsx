@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { api, setToken } from "../lib/api";
 import { Button } from "../components/ui/button";
 import { Input, Label } from "../components/ui/input";
+import { PasswordInput } from "../components/ui/password-input";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 
 type Mode = "login" | "signup";
@@ -13,19 +15,17 @@ export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     if (mode === "signup") {
       if (password.length < 8) {
-        setError("Password must be at least 8 characters.");
+        toast.error("Password must be at least 8 characters.");
         return;
       }
       if (password !== confirm) {
-        setError("Passwords do not match.");
+        toast.error("Passwords do not match.");
         return;
       }
     }
@@ -36,9 +36,10 @@ export function Login() {
           ? await api.login(email, password)
           : await api.signup(email, password);
       setToken(res.token);
+      toast.success(mode === "login" ? "Logged in" : "Account created. Welcome!");
       navigate("/", { replace: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Request failed");
+      toast.error(err instanceof Error ? err.message : "Request failed");
     } finally {
       setLoading(false);
     }
@@ -64,9 +65,8 @@ export function Login() {
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="password">Password</Label>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete={mode === "login" ? "current-password" : "new-password"}
@@ -75,16 +75,14 @@ export function Login() {
             {mode === "signup" && (
               <div className="space-y-1.5">
                 <Label htmlFor="confirm">Confirm password</Label>
-                <Input
+                <PasswordInput
                   id="confirm"
-                  type="password"
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   autoComplete="new-password"
                 />
               </div>
             )}
-            {error && <p className="text-sm text-destructive">{error}</p>}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading
                 ? "Please wait..."
@@ -102,7 +100,6 @@ export function Login() {
                   className="text-primary underline"
                   onClick={() => {
                     setMode("signup");
-                    setError(null);
                   }}
                 >
                   Sign up
@@ -116,7 +113,6 @@ export function Login() {
                   className="text-primary underline"
                   onClick={() => {
                     setMode("login");
-                    setError(null);
                   }}
                 >
                   Sign in

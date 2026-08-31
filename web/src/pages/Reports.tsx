@@ -1,9 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { toast } from "sonner";
 import { api } from "../lib/api";
 import { formatUsd, formatNumber } from "../lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
 import { Badge } from "../components/ui/badge";
+import { LoadingSpinner } from "../components/Loading";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell,
 } from "recharts";
@@ -11,8 +14,12 @@ import {
 export function Reports() {
   const { data, isLoading, error } = useQuery({ queryKey: ["reports-full"], queryFn: api.reports });
 
-  if (isLoading) return <p className="text-muted-foreground">Loading reports…</p>;
-  if (error || !data) return <p className="text-destructive">Failed to load reports.</p>;
+  useEffect(() => {
+    if (error) toast.error("Failed to load reports.");
+  }, [error]);
+
+  if (isLoading) return <LoadingSpinner label="Loading reports…" />;
+  if (error || !data) return null;
 
   const dist = data.distribution.map((b) => ({ label: b.label, count: b.count }));
   const colors = ["#1e3a8a", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", "#bfdbfe"];

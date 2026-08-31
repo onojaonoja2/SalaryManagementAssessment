@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { api } from "../lib/api";
 import type { Employee } from "../lib/types";
 import { formatUsd } from "../lib/format";
@@ -8,6 +9,7 @@ import { Button } from "../components/ui/button";
 import { Input, Select } from "../components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
 import { Dialog } from "../components/ui/badge";
+import { ConfirmDialog } from "../components/ui/confirm-dialog";
 import { EmployeeForm } from "../components/EmployeeForm";
 
 type Filters = {
@@ -31,8 +33,8 @@ export function Employees() {
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<Filters>(EMPTY);
   const [dialog, setDialog] = useState<null | { mode: "create" } | { mode: "edit"; employee: Employee }>(null);
+  const [toDelete, setToDelete] = useState<Employee | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const reference = useQuery({ queryKey: ["reference"], queryFn: api.reference });
   const managers = useQuery({
@@ -88,8 +90,8 @@ export function Employees() {
         },
       });
     },
-    onSuccess: () => { setDialog(null); invalidate(); },
-    onError: (e: Error) => setError(e.message),
+    onSuccess: () => { setDialog(null); invalidate(); toast.success("Employee created"); },
+    onError: (e: Error) => toast.error(e.message),
   });
 
   const updateMut = useMutation({
@@ -106,14 +108,14 @@ export function Employees() {
         departmentId: Number(values.departmentId),
         managerId: values.managerId ? Number(values.managerId) : null,
       }),
-    onSuccess: () => { setDialog(null); invalidate(); },
-    onError: (e: Error) => setError(e.message),
+    onSuccess: () => { setDialog(null); invalidate(); toast.success("Employee updated"); },
+    onError: (e: Error) => toast.error(e.message),
   });
 
   const deleteMut = useMutation({
     mutationFn: (id: number) => api.deleteEmployee(id),
-    onSuccess: () => invalidate(),
-    onError: (e: Error) => setError(e.message),
+    onSuccess: () => { invalidate(); toast.success("Employee deleted"); },
+    onError: (e: Error) => toast.error(e.message),
   });
 
   const countries = reference.data?.countries ?? [];
@@ -125,7 +127,6 @@ export function Employees() {
 
   const onSubmit = (values: any) => {
     setSubmitting(true);
-    setError(null);
     const run = dialog?.mode === "edit"
       ? updateMut.mutateAsync({ ...values, id: (dialog as any).employee.id })
       : createMut.mutateAsync(values);
@@ -133,9 +134,7 @@ export function Employees() {
   };
 
   const onDelete = (emp: Employee) => {
-    if (confirm(`Delete ${emp.firstName} ${emp.lastName}? This cannot be undone.`)) {
-      deleteMut.mutate(emp.id);
-    }
+    setToDelete(emp);
   };
 
   const setF = (k: keyof Filters, v: string) => setFilters((f) => ({ ...f, [k]: v }));
@@ -183,8 +182,6 @@ export function Employees() {
           </Button>
         </div>
       </div>
-
-      {error && <p className="text-sm text-destructive">{error}</p>}
 
       <Table>
         <TableHeader>
@@ -248,6 +245,26 @@ export function Employees() {
           />
         )}
       </Dialog>
+
+      <ConfirmDialog
+        open={toDelete !== null}
+        onClose={() => setToDelete(null)}
+        title="Delete employee"
+        message={
+          <>
+            Delete{" "}
+            <span className="font-semibold text-foreground">
+              {toDelete?.firstName} {toDelete?.lastName}
+            </span>
+            ? This cannot be undone.
+          </>
+        }
+        confirmLabel="Delete"
+        onConfirm={() => {
+          if (toDelete) deleteMut.mutate(toDelete.id);
+          setToDelete(null);
+        }}
+      />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { Input, Select, Label } from "../components/ui/input";
 import type { CountryRef, DepartmentRef, Employee, EmployeeDetail } from "../lib/types";
@@ -56,21 +57,19 @@ export function EmployeeForm({
     salaryAmount: "",
     payFrequency: "MONTHLY",
   });
-  const [error, setError] = useState<string | null>(null);
 
   const set = (k: keyof FormValues, v: string) => setValues((prev) => ({ ...prev, [k]: v }));
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!values.firstName || !values.lastName || !values.email) {
-      setError("First name, last name and email are required.");
+      toast.error("First name, last name and email are required.");
       return;
     }
     if (mode === "create" && !values.salaryAmount) {
-      setError("An initial salary amount is required.");
+      toast.error("An initial salary amount is required.");
       return;
     }
-    setError(null);
     onSubmit(values);
   };
 
@@ -156,7 +155,6 @@ export function EmployeeForm({
           </div>
         )}
       </div>
-      {error && <p className="text-sm text-destructive">{error}</p>}
       <div className="flex justify-end gap-2 pt-2">
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancel

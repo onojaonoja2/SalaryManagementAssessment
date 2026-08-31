@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, Navigate, Outlet, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { getToken, logout as logoutApi } from "../lib/api";
 import { Button } from "./ui/button";
 import { ChangePasswordDialog } from "./ChangePasswordDialog";
@@ -15,6 +16,7 @@ export function Layout() {
   const [pwOpen, setPwOpen] = useState(false);
   const logout = () => {
     logoutApi();
+    toast.success("Logged out");
     navigate("/login", { replace: true });
   };
   return (
