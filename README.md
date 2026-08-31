@@ -5,7 +5,7 @@ employees across multiple countries**. Built for the HR Manager persona so they
 can move off Excel and answer *"how does the org pay people?"* via self-serve
 analytics.
 
-- **Backend:** Node + Express + TypeScript + Prisma, MySQL on Aiven
+- **Backend:** Node + Express + TypeScript + Prisma, MySQL on Railway
 - **Frontend:** React + Vite + TypeScript + Tailwind (shadcn-style), TanStack Query, Recharts
 - **Tests:** Vitest (unit) + Supertest (integration)
 
